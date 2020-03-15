@@ -1,10 +1,10 @@
 package localuppercase.model;
 
-public class InputOutput {
+public class LogEntry {
 
     private String input, output;
 
-    public InputOutput(String input, String output) {
+    public LogEntry(String input, String output) {
         this.input = input;
         this.output = output;
     }

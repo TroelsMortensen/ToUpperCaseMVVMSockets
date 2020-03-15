@@ -1,29 +1,30 @@
-package localuppercase.model;
+package socketsuppercase.server.model;
+
+import socketsuppercase.shared.transferobjects.LogEntry;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextConverterManager implements TextConverter {
+public class TextManagerImpl implements TextManager {
 
-    private List<LogEntry> logs = new ArrayList<>();
+    private List<LogEntry> log = new ArrayList<>();
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
 
     @Override
-    public String toUppercase(String text) {
-        String result = text.toUpperCase();
-        LogEntry log = new LogEntry(text, result);
-        logs.add(log);
-        support.firePropertyChange("LogAdded", null, log);
+    public String toUppercase(String str) {
+        String result = str.toUpperCase();
+        LogEntry entry = new LogEntry(str, result);
+        log.add(entry);
+        support.firePropertyChange("NewLogEntry", null, entry);
         return result;
     }
 
     @Override
-    public List<LogEntry> getLogs() {
-        return logs;
+    public List<LogEntry> getLog() {
+        return log;
     }
-
 
     @Override
     public void addListener(String eventName, PropertyChangeListener listener) {
@@ -35,5 +36,3 @@ public class TextConverterManager implements TextConverter {
         support.removePropertyChangeListener(eventName, listener);
     }
 }
-
-

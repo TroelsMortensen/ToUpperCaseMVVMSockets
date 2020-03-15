@@ -1,13 +1,13 @@
-package localuppercase.views.log;
+package socketsuppercase.client.views.log;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.cell.PropertyValueFactory;
-import localuppercase.core.ViewHandler;
-import localuppercase.core.ViewModelFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import localuppercase.model.LogEntry;
-import localuppercase.views.ViewController;
+import javafx.scene.control.cell.PropertyValueFactory;
+import socketsuppercase.client.core.ViewHandler;
+import socketsuppercase.client.core.ViewModelFactory;
+import socketsuppercase.shared.transferobjects.LogEntry;
+import socketsuppercase.client.views.ViewController;
 
 public class LogViewController implements ViewController {
 

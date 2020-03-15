@@ -7,7 +7,7 @@ import java.util.List;
 public interface TextConverter extends Subject {
 
     String toUppercase(String text);
-    List<InputOutput> getLogs();
+    List<LogEntry> getLogs();
 
 }
 
