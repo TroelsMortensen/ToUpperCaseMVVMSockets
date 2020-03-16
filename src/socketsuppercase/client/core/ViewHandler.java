@@ -41,7 +41,7 @@ public class ViewHandler {
 
     public void openLog() {
         // no reusing a logScene, because I want the log to reload the latest every time.
-        if(logScene == null) {
+        if (logScene == null) {
             try {
                 Parent root = loadFXML("../views/log/Log.fxml");
 

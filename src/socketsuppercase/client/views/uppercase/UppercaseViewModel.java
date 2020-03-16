@@ -4,8 +4,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import socketsuppercase.client.model.TextConverter;
 
-import java.beans.PropertyChangeEvent;
-
 public class UppercaseViewModel {
     private StringProperty request, reply, error;
     private TextConverter textConverter;
@@ -15,17 +13,13 @@ public class UppercaseViewModel {
         request = new SimpleStringProperty();
         reply = new SimpleStringProperty();
         error = new SimpleStringProperty();
-        textConverter.addListener("UpperCase", this::onUppercase);
-    }
-
-    private void onUppercase(PropertyChangeEvent evt) {
-        reply.set((String)evt.getNewValue());
     }
 
     void convert() {
         String input = request.get();
         if(input != null && !"".equals(input)) {
-            textConverter.toUppercase(input);
+            String result = textConverter.toUppercase(input);
+            reply.set(result);
         } else {
             error.set("Input cannot be empty");
         }

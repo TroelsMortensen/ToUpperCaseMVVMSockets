@@ -18,12 +18,4 @@ public class LogEntry implements Serializable {
     public String getOutput() {
         return output;
     }
-
-    @Override
-    public String toString() {
-        return "LogEntry{" +
-                "input='" + input + '\'' +
-                ", output='" + output + '\'' +
-                '}';
-    }
 }

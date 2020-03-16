@@ -7,23 +7,28 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextManagerImpl implements TextManager {
+public class TextManagerImpl implements TextManager{
 
-    private List<LogEntry> log = new ArrayList<>();
-    private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private PropertyChangeSupport support;
+    private List<LogEntry> logEntries;
+
+    public TextManagerImpl() {
+        support = new PropertyChangeSupport(this);
+        logEntries = new ArrayList<>();
+    }
 
     @Override
     public String toUppercase(String str) {
         String result = str.toUpperCase();
-        LogEntry entry = new LogEntry(str, result);
-        log.add(entry);
-        support.firePropertyChange("NewLogEntry", null, entry);
+        LogEntry logEntry = new LogEntry(str, result);
+        logEntries.add(logEntry);
+        support.firePropertyChange("NewLogEntry", null, logEntry);
         return result;
     }
 
     @Override
     public List<LogEntry> getLog() {
-        return log;
+        return new ArrayList<>(logEntries);
     }
 
     @Override

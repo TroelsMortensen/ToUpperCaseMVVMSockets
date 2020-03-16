@@ -8,21 +8,19 @@ import java.net.Socket;
 
 public class SocketServer {
 
-    private final TextManager tm;
+    private TextManager textManager;
 
-    public SocketServer(TextManager tm) {
-        this.tm = tm;
+    public SocketServer(TextManager textManager) {
+        this.textManager = textManager;
     }
 
     public void startServer() {
         try {
             ServerSocket welcomeSocket = new ServerSocket(2910);
-            System.out.println("Server started");
-            while(true){
-                System.out.println("Waiting for client");
+
+            while(true) {
                 Socket socket = welcomeSocket.accept();
-                new Thread(new SocketHandler(socket, tm)).start();
-                System.out.println("Client connected");
+                new Thread(new SocketHandler(socket, textManager)).start();
             }
         } catch (IOException e) {
             e.printStackTrace();

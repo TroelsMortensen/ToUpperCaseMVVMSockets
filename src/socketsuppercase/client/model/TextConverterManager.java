@@ -1,21 +1,22 @@
 package socketsuppercase.client.model;
 
-import socketsuppercase.client.networking.Client;
+import socketsuppercase.client.network.Client;
+import socketsuppercase.shared.transferobjects.LogEntry;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TextConverterManager implements TextConverter {
 
-    private final Client client;
     private PropertyChangeSupport support = new PropertyChangeSupport(this);
+    private Client client;
 
     public TextConverterManager(Client client) {
         this.client = client;
         client.startClient();
-        client.addListener("UpperCase", this::onUpperCaseReceived);
-        client.addListener("FetchLog", this::onLogReceived);
         client.addListener("NewLogEntry", this::onNewLogEntry);
     }
 
@@ -23,24 +24,15 @@ public class TextConverterManager implements TextConverter {
         support.firePropertyChange(evt);
     }
 
-    private void onLogReceived(PropertyChangeEvent evt) {
-        support.firePropertyChange(evt);
-    }
-
-    private void onUpperCaseReceived(PropertyChangeEvent evt) {
-        support.firePropertyChange(evt);
+    @Override
+    public String toUppercase(String text) {
+        return client.toUppercase(text);
     }
 
     @Override
-    public void toUppercase(String text) {
-        client.toUppercase(text);
+    public List<LogEntry> getLogs() {
+        return client.getLog();
     }
-
-    @Override
-    public void getLogs() {
-        client.getLogs();
-    }
-
 
     @Override
     public void addListener(String eventName, PropertyChangeListener listener) {

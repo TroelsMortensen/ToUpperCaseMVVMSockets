@@ -16,22 +16,16 @@ public class LogViewModel {
 
     public LogViewModel(TextConverter textConverter) {
         this.textConverter = textConverter;
-        textConverter.addListener("FetchLog", this::onLogReceived);
-        textConverter.addListener("NewLogEntry", this::onNewEntry);
+        textConverter.addListener("NewLogEntry", this::onNewLogEntry);
     }
 
-    private void onNewEntry(PropertyChangeEvent evt) {
-        logs.add((LogEntry) evt.getNewValue());
-    }
-
-    private void onLogReceived(PropertyChangeEvent evt) {
-        System.out.println("\nLogViewModel: " + evt.getNewValue());
-        logs.addAll((List<LogEntry>)evt.getNewValue());
+    private void onNewLogEntry(PropertyChangeEvent evt) {
+        logs.add((LogEntry)evt.getNewValue());
     }
 
     void loadLogs() {
-        logs = FXCollections.observableArrayList();
-        textConverter.getLogs();
+        List<LogEntry> logList = textConverter.getLogs();
+        logs = FXCollections.observableArrayList(logList);
     }
 
     ObservableList<LogEntry> getLogs() {

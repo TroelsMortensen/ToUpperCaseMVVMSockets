@@ -9,21 +9,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SocketHandler implements Runnable {
 
     private Socket socket;
-    private TextManager tm;
+    private TextManager textManager;
 
     private ObjectOutputStream outToClient;
     private ObjectInputStream inFromClient;
 
-    public SocketHandler(Socket socket, TextManager tm) {
+    public SocketHandler(Socket socket, TextManager textManager) {
         this.socket = socket;
-        this.tm = tm;
-        tm.addListener("NewLogEntry", this::onNewLogEntry);
+        this.textManager = textManager;
+
         try {
             outToClient = new ObjectOutputStream(socket.getOutputStream());
             inFromClient = new ObjectInputStream(socket.getInputStream());
@@ -32,31 +31,28 @@ public class SocketHandler implements Runnable {
         }
     }
 
-    private void onNewLogEntry(PropertyChangeEvent evt) {
+    @Override
+    public void run() {
         try {
-            outToClient.writeUnshared(new Request("NewLogEntry", evt.getNewValue()));
-        } catch (IOException e) {
+            Request request = (Request) inFromClient.readObject();
+            if("Listener".equals(request.getType())) {
+                textManager.addListener("NewLogEntry", this::onNewLogEntry);
+            } else if("Uppercase".equals(request.getType())) {
+                String result = textManager.toUppercase((String) request.getArg());
+                outToClient.writeObject(new Request("Uppercase", result));
+            } else if("FetchLog".equals(request.getType())) {
+                List<LogEntry> log = textManager.getLog();
+                outToClient.writeObject(new Request("FetchLog", log));
+            }
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void run() {
+    private void onNewLogEntry(PropertyChangeEvent evt) {
         try {
-            while(true) {
-                Request request = (Request) inFromClient.readObject();
-                if("UpperCase".equals(request.getRequestType())) {
-                    String result = tm.toUppercase((String) request.getArg());
-                    outToClient.writeObject(new Request("UpperCase", result));
-                } else if("FetchLog".equals(request.getRequestType())) {
-                    System.out.println("Retrieving logs..");
-                    List<LogEntry> log = tm.getLog();
-                    ArrayList<LogEntry> newList = new ArrayList<>(log);
-                    Request req = new Request("FetchLog", newList);
-                    outToClient.writeUnshared(req);
-                }
-            }
-        } catch (IOException | ClassNotFoundException e) {
+            outToClient.writeObject(new Request(evt.getPropertyName(), evt.getNewValue()));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
