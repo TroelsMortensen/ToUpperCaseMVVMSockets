@@ -5,3 +5,8 @@ Video here:
 https://youtu.be/D2MOv-yk3Xs
 
 There are three parts.
+
+Update:
+I have added another version using RMI instead of sockets. 
+Video here:
+https://youtu.be/1vpMRyEk3eE
