@@ -1,5 +1,6 @@
 package socketsuppercase.server.model;
 
+
 import socketsuppercase.shared.transferobjects.LogEntry;
 import socketsuppercase.shared.util.Subject;
 
