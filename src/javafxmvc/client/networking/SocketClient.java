@@ -1,4 +1,4 @@
-package socketsuppercase.client.network;
+package javafxmvc.client.networking;
 
 import socketsuppercase.shared.transferobjects.LogEntry;
 import socketsuppercase.shared.transferobjects.Request;
@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SocketClient implements Client {
 
@@ -17,9 +18,6 @@ public class SocketClient implements Client {
 
     public SocketClient() {
         support = new PropertyChangeSupport(this);
-    }
-
-    public void startClient() {
         try {
             Socket socket = new Socket("localhost", 2910);
             ObjectOutputStream outToServer = new ObjectOutputStream(socket.getOutputStream());
@@ -45,33 +43,27 @@ public class SocketClient implements Client {
     }
 
     @Override
-    public String toUppercase(String str) {
-        try {
-            Request response = request(str, "Uppercase");
-            return (String)response.getArg();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return str;
+    public void toUppercase(String str, Consumer<String> callback) {
+        new Thread(() -> {
+            try {
+                Request response = request(str, "Uppercase");
+                callback.accept((String) response.getArg());
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
-    public List<LogEntry> getLog() {
-        try {
-            Request response = request(null, "FetchLog");
-            return (List<LogEntry>) response.getArg();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private Request request(String arg, String type) throws IOException, ClassNotFoundException {
-        Socket socket = new Socket("localhost", 2910);
-        ObjectOutputStream outToServer = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream inFromServer = new ObjectInputStream(socket.getInputStream());
-        outToServer.writeObject(new Request(type, arg));
-        return (Request) inFromServer.readObject();
+    public void getLog(Consumer<List<LogEntry>> callback) {
+        new Thread(() -> {
+            try {
+                Request response = request(null, "FetchLog");
+                callback.accept((List<LogEntry>) response.getArg());
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     @Override
@@ -82,5 +74,13 @@ public class SocketClient implements Client {
     @Override
     public void removeListener(String eventName, PropertyChangeListener listener) {
         support.removePropertyChangeListener(eventName, listener);
+    }
+
+    private Request request(String arg, String type) throws IOException, ClassNotFoundException {
+        Socket socket = new Socket("localhost", 2910);
+        ObjectOutputStream outToServer = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream inFromServer = new ObjectInputStream(socket.getInputStream());
+        outToServer.writeObject(new Request(type, arg));
+        return (Request) inFromServer.readObject();
     }
 }
