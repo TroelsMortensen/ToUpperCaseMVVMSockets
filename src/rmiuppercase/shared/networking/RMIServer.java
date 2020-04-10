@@ -1,5 +1,6 @@
 package rmiuppercase.shared.networking;
 
+import rmiuppercase.client.network.RMIClient;
 import rmiuppercase.shared.transferobjects.LogEntry;
 
 import java.rmi.Remote;
@@ -10,4 +11,6 @@ public interface RMIServer extends Remote {
     String toUppercase(String str) throws RemoteException;
     List<LogEntry> getLogs() throws RemoteException;
     void registerClient(ClientCallback client) throws RemoteException;
+
+    void unRegisterClient(ClientCallback client) throws  RemoteException;
 }

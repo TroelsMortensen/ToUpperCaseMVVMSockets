@@ -35,6 +35,14 @@ public class RMIClient implements Client, ClientCallback {
     }
 
     @Override
+    public void unRegisterClient() {
+        try {
+            server.unRegisterClient(this);
+        } catch (RemoteException e) {
+        }
+    }
+
+    @Override
     public String toUppercase(String str) {
         try {
             return server.toUppercase(str);

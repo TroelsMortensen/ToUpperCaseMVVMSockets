@@ -11,11 +11,14 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RMIServerImpl implements RMIServer {
 
     private final TextManager textManager;
+    private Map<ClientCallback, PropertyChangeListener> listeners = new HashMap<>();
 
     public RMIServerImpl(TextManager textManager) throws RemoteException {
         UnicastRemoteObject.exportObject(this, 0);
@@ -39,8 +42,9 @@ public class RMIServerImpl implements RMIServer {
 
     @Override
     public void registerClient(ClientCallback client)  {
+
         PropertyChangeListener listener = null;
-        PropertyChangeListener finalListener = listener;
+        PropertyChangeListener finalListener = listener; // bit of a funky hack here
 
         listener = evt -> {
             try {
@@ -50,6 +54,16 @@ public class RMIServerImpl implements RMIServer {
                 textManager.removeListener("NewLogEntry", finalListener);
             }
         };
+        listeners.put(client, listener);
         textManager.addListener("NewLogEntry", listener);
+    }
+
+    @Override
+    public void unRegisterClient(ClientCallback client) {
+        PropertyChangeListener listener = listeners.get(client);
+        if(listener != null) {
+            textManager.removeListener("NewLogEntry", listener);
+        }
+        int stopher=0;
     }
 }
