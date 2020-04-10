@@ -42,9 +42,17 @@ public class RMIServerImpl implements RMIServer {
 
     @Override
     public void registerClient(ClientCallback client)  {
-
+        // bit of a funky hack here
+        // I first instantiate "listenter" to null, and make "finalListener" point to the same objec
+        // as "listener". For now that is null.
+        // This is done, because I below, in the catch clause, need to remove my listener from my
+        // textManager. I cannot remove "listener", because it is not instantiated at this point.
+        // However, "finalListener" is instantiated, to point to "listener", so I can remove that from
+        // textManager.
+        // The point is, both "listener" and "finalListener" references the same object in memory,
+        // my instance of a PropertyChangeListener interface.
         PropertyChangeListener listener = null;
-        PropertyChangeListener finalListener = listener; // bit of a funky hack here
+        PropertyChangeListener finalListener = listener;
 
         listener = evt -> {
             try {
